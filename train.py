@@ -41,7 +41,7 @@ def run(obj, opts, duration, x_init, labels, param_changes, tel_scheds, use_time
         runs = multiruns[i]
         
         if not use_time:
-            total_loss_vals = np.zeros(epochs+1)
+            total_loss_vals = np.zeros(duration+1)
             
         for run in range(runs):
             x_init_clone = x_init.clone().detach().requires_grad_(True)
