@@ -22,9 +22,9 @@ Args
     figsz: The figure size. The default is (12,8).
     ylim: The upper limit of the y-axis for the plot. The default is -1, which sets the limit automatically.
     multiruns: The defult is [], which runs everything once. Can only use when use_time is False.
-    verbose: The default is 0. If set to 1, the weights will be printed following each epoch.
+    verbose: The default is 1. If set to 0, prints nothing. If set to 2, the weights will be printed following each epoch.
 """
-def run(obj, opts, duration, x_init, labels, param_changes, tel_scheds, use_time=False, multiruns=[], verbose=0):
+def run(obj, opts, duration, x_init, labels, param_changes, tel_scheds, use_time=False, multiruns=[], verbose=1):
     #Set default value of multiruns
     if multiruns == []:
         multiruns = [1] * len(opts)
@@ -70,13 +70,14 @@ def run(obj, opts, duration, x_init, labels, param_changes, tel_scheds, use_time
             "time":times
         })
         dfs.append(cur_df)
-                    
-        print("Total time elapsed using", labels[i], "-", times[-1])
-        print("Final x -", x)
-        print("Final loss -", obj(x).item())
-        #if obj == multi_layer:
-        #    print("Final score:", test_score(x))
-        print("------------------------------")
+            
+        if verbose >= 1:        
+            print("Total time elapsed using", labels[i], "-", times[-1])
+            print("Final x -", x)
+            print("Final loss -", obj(x).item())
+            #if obj == multi_layer:
+            #    print("Final score:", test_score(x))
+            print("------------------------------")
 
     return pd.concat(dfs)
 
@@ -91,14 +92,14 @@ Args
     x: The initial weights that we will train.
     teleport_sched: A list containing the epochs in which we teleport.
     use_time: Set True for duration to be in seconds, False (default) for duration to be in epochs.
-    verbose: The default is 0. If set to 1, the weights will be printed following each epoch.
+    verbose: The default is 1. If set to 0, prints nothing. If set to 2, the weights will be printed following each epoch.
 
 Returns
     x: The final weights.
     loss_vals: A list containing the loss after each epoch.
     times: A list containing the total time expired (since the start of training) after each epoch.
 """
-def train(obj, opt, duration, x, params, teleport_sched, use_time=False, verbose=0):
+def train(obj, opt, duration, x, params, teleport_sched, use_time=False, verbose=1):
     loss_vals = [obj(x).item()]
     times = [0]
     
@@ -110,12 +111,12 @@ def train(obj, opt, duration, x, params, teleport_sched, use_time=False, verbose
         while time.time()-start < duration:
             if epoch in teleport_sched:
                 x, params = step(opt, params, x, obj, True)
-                if verbose == 1:
+                if verbose == 2:
                     print("Teleporting now!")
             else:
                 x, params = step(opt, params, x, obj, False)
                 
-            if verbose == 1:
+            if verbose == 2:
                 print(x)
 
             loss_vals.append(obj(x).item())
@@ -127,12 +128,12 @@ def train(obj, opt, duration, x, params, teleport_sched, use_time=False, verbose
         for epoch in range(duration):
             if epoch in teleport_sched:
                 x, params = step(opt, params, x, obj, True)
-                if verbose == 1:
+                if verbose == 2:
                     print("Teleporting now!")
             else:
                 x, params = step(opt, params, x, obj, False)
                 
-            if verbose == 1:
+            if verbose == 2:
                 print(x)
 
             loss_vals.append(obj(x).item())

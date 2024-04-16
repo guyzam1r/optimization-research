@@ -41,9 +41,9 @@ def group_action_SO2(x, g, x_to_v, v_to_x):
     return v_to_x(rotated_v)
 
 def teleport_SO2(x, x_to_v, v_to_x, loss_func, lr_theta):
-    #theta = torch.tensor(np.random.random() * np.pi, requires_grad=True)
-    theta = torch.tensor(0.5*np.pi, requires_grad=True)
-    for theta_step in range(500):
+    theta = torch.tensor(np.random.random() * np.pi, requires_grad=True)
+    #theta = torch.tensor(0.5*np.pi, requires_grad=True)
+    for theta_step in range(20):
         g = torch.vstack(( \
             torch.cat(( (torch.cos(theta)).view(1), (-torch.sin(theta)).view(1) )), \
             torch.cat(( (torch.sin(theta)).view(1), (torch.cos(theta)).view(1))) \
