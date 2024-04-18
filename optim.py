@@ -12,11 +12,11 @@ def step(optimizer, params, x, obj, teleport):
         if obj == booth:
             x, tel_dist = teleport_SO2(x, booth_x_to_v, booth_v_to_x, obj, 0.001)
         elif obj == rosenbrock:
-            x, tel_dist = teleport_SO2(x, ros_x_to_v, ros_v_to_x, obj, 0.001)
+            x, tel_dist = teleport_SO2(x, ros_x_to_v, ros_v_to_x, obj, 0.1)
         elif obj == sphere:
             x, tel_dist = teleport_SO2(x, sphere_x_to_v, sphere_v_to_x, obj, 0.01)
         elif obj == ellipsoid:
-            x, tel_dist = teleport_SO2(x, elli_x_to_v, elli_v_to_x, obj, 0.01)
+            x, tel_dist = teleport_SO2(x, elli_x_to_v, elli_v_to_x, obj, 0.001)
        #elif obj == multi_layer:
        #     x, tel_dist = teleport_MLP(x, X, Y, 1e-4, w_dims, obj)
        #     print(tel_dist)

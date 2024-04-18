@@ -53,7 +53,7 @@ def run(obj, opts, duration, x_init, labels, param_changes, tel_scheds, use_time
                 parameters = set_param(parameters, change[0], change[1], change[2])
 
             #train, then store losses
-            x, loss_vals, times = train(obj, opt, duration, x_init_clone, parameters, tel_sched, use_time, verbose)
+            x_vals, loss_vals, times = train(obj, opt, duration, x_init_clone, parameters, tel_sched, use_time, verbose)
             
             if (not use_time) and (runs > 1):
                 total_loss_vals += np.array(loss_vals)
@@ -64,17 +64,18 @@ def run(obj, opts, duration, x_init, labels, param_changes, tel_scheds, use_time
 
         #Save data
         cur_df = pd.DataFrame({
-            "label":[labels[i]] * len(loss_vals),
-            "epoch":np.arange(len(loss_vals)),
+            "label":[labels[i]] * len(x_vals),
+            "epoch":np.arange(len(x_vals)),
             "loss":loss_vals,
-            "time":times
+            "time":times,
+            "x":x_vals
         })
         dfs.append(cur_df)
             
         if verbose >= 1:        
             print("Total time elapsed using", labels[i], "-", times[-1])
-            print("Final x -", x)
-            print("Final loss -", obj(x).item())
+            print("Final x -", x_vals[-1])
+            print("Final loss -", obj(torch.from_numpy(x_vals[-1])))
             #if obj == multi_layer:
             #    print("Final score:", test_score(x))
             print("------------------------------")
@@ -102,6 +103,7 @@ Returns
 def train(obj, opt, duration, x, params, teleport_sched, use_time=False, verbose=1):
     loss_vals = [obj(x).item()]
     times = [0]
+    x_vals = [x.detach().numpy()]
     
     start = time.time()
 
@@ -121,6 +123,7 @@ def train(obj, opt, duration, x, params, teleport_sched, use_time=False, verbose
 
             loss_vals.append(obj(x).item())
             times.append(time.time() - start)
+            x_vals.append(x.detach.numpy())
             epoch += 1
     
     #Duration in epochs
@@ -138,5 +141,6 @@ def train(obj, opt, duration, x, params, teleport_sched, use_time=False, verbose
 
             loss_vals.append(obj(x).item())
             times.append(time.time() - start)
+            x_vals.append(x.detach().numpy())
         
-    return x, loss_vals, times
+    return x_vals, loss_vals, times
